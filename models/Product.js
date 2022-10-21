@@ -20,7 +20,8 @@ Product.init(
 			allowNull: false
 		},
 		price: {
-			type: DataTypes.DECIMAL,
+			// Displays/saves to two decimal points for to mimic actual store prices
+			type: DataTypes.DECIMAL(10, 2), 
 			allowNull: false,
 			validate: {
 				isDecimal: true
