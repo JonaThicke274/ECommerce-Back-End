@@ -3,7 +3,7 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
 
-// GETS/finds al lproducts and associated category and tag(s)
+// GETS/finds all products and associated category and tag(s)
 router.get('/', (req, res) => {
 	Product.findAll({
 		include: [
@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 	});
 });
 
-// get one product
+// GETS/finds product by id with associatd category and tag(s)
 router.get('/:id', (req, res) => {
 	Product.findOne({
 		where: {
@@ -41,7 +41,7 @@ router.get('/:id', (req, res) => {
 	});
 });
 
-// create new product
+// POSTS/creates new product
 router.post('/', (req, res) => {
 	/* req.body should look like this...
     {
@@ -73,7 +73,7 @@ router.post('/', (req, res) => {
 		});
 });
 
-// update product
+// PUTS/updates new info in table for that product by id
 router.put('/:id', (req, res) => {
 	// update product data
 	Product.update(req.body, {
@@ -100,7 +100,7 @@ router.put('/:id', (req, res) => {
 			// figure out which ones to remove
 			const productTagsToRemove = productTags
 				.filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
-				map(({ id }) => id);
+				.map(({ id }) => id);
 
 			// run both actions
 			return Promise.all([
@@ -110,13 +110,29 @@ router.put('/:id', (req, res) => {
 		})
 		.then((updatedProductTags) => res.json(updatedProductTags))
 		.catch((err) => {
-			// console.log(err);
+			console.log(err);
 			res.status(400).json(err);
 		});
 });
 
+// DELETES/destroys product by id
 router.delete('/:id', (req, res) => {
-  	// delete one product by its `id` value
+  	Product.destroy({
+		where: {
+			id: req.params.id
+		}
+	})
+	.then(productData => {
+		if(!productData) {
+			res.status(404).json({ message: `No product found with this id!`})
+		}
+		
+		res.json(productData)
+	})
+	.catch(err => {
+		console.log(err);
+		res.status(500).json(err);
+	});
 });
 
 module.exports = router;

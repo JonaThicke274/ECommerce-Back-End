@@ -77,7 +77,7 @@ router.put('/:id', (req, res) => {
 	});
 });
 
-// DELETES/destroys new category by id
+// DELETES/destroys category by id
 router.delete('/:id', (req, res) => {
 	Category.destroy({
 		where: {
